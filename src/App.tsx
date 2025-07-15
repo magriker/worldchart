@@ -1,10 +1,12 @@
-import { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  return <></>;
+  return (
+    <>
+      <h1>World Chart</h1>
+      <button>Start</button>
+    </>
+  );
 }
 
 export default App;
