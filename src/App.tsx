@@ -1,10 +1,10 @@
 import "./App.css";
+import { Main } from "./pages/main";
 
 function App() {
   return (
     <>
-      <h1>World Chart</h1>
-      <button>Start</button>
+      <Main></Main>
     </>
   );
 }
