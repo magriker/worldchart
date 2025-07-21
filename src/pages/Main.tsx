@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 export const Main = () => {
   const [countryName, setCountryName] = useState<string>("");
   const [country, setCountry] = useState();
-  console.log(country[0]);
+  console.log(country && country[0]?.name?.common);
+
+  //   const { region, capital } = country ? country[0] : "";
 
   const lowerCase = (string) => {
     const lower = string.toLowerCase();
@@ -32,8 +34,7 @@ export const Main = () => {
           type="text"
           onChange={(e) => setCountryName(lowerCase(e.target.value))}
         />
-        {countryName}
-        {/* {country && } */}
+        {country && country[0]?.region}
       </form>
     </div>
   );
