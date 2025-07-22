@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { CountryInfo } from "./CountryInfo";
 
 export const Main = () => {
   const [countryName, setCountryName] = useState<string>("");
-  const [country, setCountry] = useState();
-  console.log(country && country[0]?.name?.common);
+  const [country, setCountry] = useState(null);
+  console.log(country && country[0]?.name);
 
   //   const { region, capital } = country ? country[0] : "";
 
@@ -34,7 +35,7 @@ export const Main = () => {
           type="text"
           onChange={(e) => setCountryName(lowerCase(e.target.value))}
         />
-        {country && country[0]?.region}
+        {country === true ? <CountryInfo info={country[0]}></CountryInfo> : ""}
       </form>
     </div>
   );
