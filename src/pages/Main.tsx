@@ -35,7 +35,7 @@ export const Main = () => {
           type="text"
           onChange={(e) => setCountryName(lowerCase(e.target.value))}
         />
-        {country === true ? <CountryInfo info={country[0]}></CountryInfo> : ""}
+        {country && <CountryInfo info={country[0]}></CountryInfo>}
       </form>
     </div>
   );
