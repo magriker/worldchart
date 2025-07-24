@@ -1,11 +1,13 @@
+import styles from "../css/CountryInfo.module.css";
+
 export const CountryInfo = ({ info }) => {
   if (!info) return;
   const {
     name: { common },
     capital,
     region,
-    flag,
     population,
+    flags: { svg },
   } = info;
   console.log(info);
 
@@ -24,6 +26,10 @@ export const CountryInfo = ({ info }) => {
       <h1>Country info</h1>
       <p>
         The country's name: <strong>{common}</strong>
+        <div>
+          <p>Flag</p>
+          <img src={svg} alt="country flag" className={styles.flag} />
+        </div>
       </p>
       <p>
         The region of the country: <strong>{region}</strong>
