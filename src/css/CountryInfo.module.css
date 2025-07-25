@@ -1,3 +1,7 @@
-.flag {
-  width: 100px;
+.cardBox {
+  display: flex;
+  flex-direction: row;
+  width: 1000px;
+  gap: 15px;
+  flex-wrap: wrap;
 }

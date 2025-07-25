@@ -3,8 +3,9 @@ import { CountryInfo } from "./CountryInfo";
 
 export const Main = () => {
   const [countryName, setCountryName] = useState<string>("");
-  const [country, setCountry] = useState(null);
-  console.log(country && country[0]?.name);
+  const [countries, setCountry] = useState(null);
+  const [error, setError] = useState();
+  console.log(countries && countries);
 
   //   const { region, capital } = country ? country[0] : "";
 
@@ -16,12 +17,24 @@ export const Main = () => {
   useEffect(
     function () {
       const fetchCountry = async () => {
-        const res = await fetch(
-          `https://restcountries.com/v3.1/name/${countryName}`
-        );
-        const data = await res.json();
-        setCountry(data);
+        try {
+          setError(null);
+          const res = await fetch(
+            `https://restcountries.com/v3.1/name/${countryName}`
+          );
+
+          if (!res.ok) {
+            throw new Error(`HTPP error! Status:${res.status}`);
+          }
+
+          const data = await res.json();
+          setCountry(data);
+        } catch (err) {
+          setError(err.message);
+          setCountry(null);
+        }
       };
+
       fetchCountry();
     },
     [countryName]
@@ -35,7 +48,8 @@ export const Main = () => {
           type="text"
           onChange={(e) => setCountryName(lowerCase(e.target.value))}
         />
-        {country && <CountryInfo info={country[0]}></CountryInfo>}
+        {error && <p>{error}</p>}
+        {countries && <CountryInfo countries={countries}></CountryInfo>}
       </form>
     </div>
   );
