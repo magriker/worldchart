@@ -1,6 +1,6 @@
 import styles from "../css/CountryCard.module.css";
 
-export const CountryCard = ({ country }) => {
+export const CountryCard = ({ country, setModal }) => {
   const {
     name: { common },
     capital,
@@ -11,7 +11,7 @@ export const CountryCard = ({ country }) => {
   console.log(country);
 
   return (
-    <div className={styles.countryCard}>
+    <div className={styles.countryCard} onClick={}>
       <h2 className="">
         <strong>{common}</strong>
       </h2>
