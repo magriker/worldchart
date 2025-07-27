@@ -3,7 +3,11 @@ import styles from "../css/CountryInfo.module.css";
 import { useState } from "react";
 
 export const CountryInfo = ({ countries }) => {
-  const [modal, setModal] = useState(false);
+  const [isModalopen, setIsModalOpen] = useState(false);
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalopen);
+  };
 
   if (!countries) return;
   console.log(countries);
@@ -12,7 +16,10 @@ export const CountryInfo = ({ countries }) => {
       <h1>Country info</h1>
       <div className={styles.cardBox}>
         {countries.map((country) => (
-          <CountryCard country={country} setModal={setModal}></CountryCard>
+          <CountryCard
+            country={country}
+            toggleModal={toggleModal}
+          ></CountryCard>
         ))}
       </div>
     </div>
