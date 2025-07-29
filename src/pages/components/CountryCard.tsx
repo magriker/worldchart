@@ -1,6 +1,11 @@
-import styles from "../css/CountryCard.module.css";
+import styles from "../../css/CountryCard.module.css";
 
-export const CountryCard = ({ country, toggleModal }) => {
+export const CountryCard = ({ country, toggleModal, setSelectedCountry }) => {
+  const handleClick = () => {
+    toggleModal();
+    setSelectedCountry(country);
+  };
+
   const {
     name: { common },
     capital,
@@ -11,7 +16,7 @@ export const CountryCard = ({ country, toggleModal }) => {
   console.log(country);
 
   return (
-    <div className={styles.countryCard} onClick={toggleModal}>
+    <div className={styles.countryCard} onClick={handleClick}>
       <h2 className="">
         <strong>{common}</strong>
       </h2>

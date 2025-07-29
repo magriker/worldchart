@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { CountryInfo } from "./CountryInfo";
+import { CountryInfo } from "./components/CountryInfo";
+import { Modal } from "./components/Modal";
 
 export const Main = () => {
   const [countryName, setCountryName] = useState<string>("");
   const [countries, setCountry] = useState(null);
   const [error, setError] = useState();
-  console.log(countries && countries);
+  const [isModalopen, setIsModalOpen] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState();
 
-  //   const { region, capital } = country ? country[0] : "";
+  const toggleModal = () => {
+    setIsModalOpen(!isModalopen);
+  };
+  console.log(countries && countries);
 
   const lowerCase = (string) => {
     const lower = string.toLowerCase();
@@ -49,8 +54,20 @@ export const Main = () => {
           onChange={(e) => setCountryName(lowerCase(e.target.value))}
         />
         {error && <p>{error}</p>}
-        {countries && <CountryInfo countries={countries}></CountryInfo>}
+        {countries && (
+          <CountryInfo
+            countries={countries}
+            toggleModal={toggleModal}
+            setSelectedCountry={setSelectedCountry}
+          ></CountryInfo>
+        )}
       </form>
+      {isModalopen && (
+        <Modal
+          toggleModal={toggleModal}
+          selectedCountry={selectedCountry}
+        ></Modal>
+      )}
     </div>
   );
 };

@@ -1,14 +1,8 @@
 import { CountryCard } from "./CountryCard";
-import styles from "../css/CountryInfo.module.css";
+import styles from "../../css/CountryInfo.module.css";
 import { useState } from "react";
 
-export const CountryInfo = ({ countries }) => {
-  const [isModalopen, setIsModalOpen] = useState(false);
-
-  const toggleModal = () => {
-    setIsModalOpen(!isModalopen);
-  };
-
+export const CountryInfo = ({ countries, toggleModal, setSelectedCountry }) => {
   if (!countries) return;
   console.log(countries);
   return (
@@ -19,6 +13,7 @@ export const CountryInfo = ({ countries }) => {
           <CountryCard
             country={country}
             toggleModal={toggleModal}
+            setSelectedCountry={setSelectedCountry}
           ></CountryCard>
         ))}
       </div>
