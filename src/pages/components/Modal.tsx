@@ -44,6 +44,8 @@ export const Modal = ({ toggleModal, selectedCountry }) => {
             .filter((item) => item.value !== null)
             .map(({ date, value }) => ({ year: date, gdp: value }))
             .reverse();
+          console.log(simplified);
+
           setGdp(simplified);
         } catch (err) {
           setError(err.message);
@@ -63,30 +65,40 @@ export const Modal = ({ toggleModal, selectedCountry }) => {
           <h2>{common}</h2>
           <div>
             <h3>GDP</h3>
-            <ResponsiveContainer width="100%" height={400}>
-              <LineChart
-                data={gdp}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
-                <YAxis
-                  tickFormatter={(val) =>
-                    `$${(val / 1_000_000_000_000).toFixed(1)}T`
-                  }
-                />
-                <Tooltip
-                  formatter={(val) => `$${Number(val).toLocaleString()}`}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="gdp"
-                  stroke="#8884d8"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {error ? (
+              <p>{error}</p>
+            ) : (
+              <ResponsiveContainer width="100%" height={400}>
+                <LineChart
+                  data={gdp}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="year" />
+                  <YAxis
+                    tickFormatter={(val) => {
+                      if (val >= 1_000_000_000_000) {
+                        return `$${(val / 1_000_000_000_000).toFixed(1)}T`;
+                      } else if (val >= 1_000_000_000) {
+                        return `$${(val / 1_000_000_000).toFixed(1)}B`;
+                      } else {
+                        return `$${val.toLocaleString()}`;
+                      }
+                    }}
+                  />
+                  <Tooltip
+                    formatter={(val) => `$${Number(val).toLocaleString()}`}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="gdp"
+                    stroke="#8884d8"
+                    strokeWidth={2}
+                    dot={{ r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
           </div>
 
           <button onClick={toggleModal}>Close</button>
