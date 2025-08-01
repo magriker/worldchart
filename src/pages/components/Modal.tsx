@@ -10,14 +10,23 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { PieChart, Pie, Cell } from "recharts";
 
 const LASTYEAR = new Date().getFullYear() - 1;
 const TENYEARSAGO = LASTYEAR - 10;
+const indicators = {
+  children: "SP.POP.0014.TO.ZS",
+  working: "SP.POP.1564.TO.ZS",
+  elderly: "SP.POP.65UP.TO.ZS",
+};
+const colors = ["#82ca9d", "#8884d8", "#ffbb28"];
 
 export const Modal = ({ toggleModal, selectedCountry }) => {
   const [error, setError] = useState();
   const [gdp, setGdp] = useState();
+  const [populationForGeneration, setPopulationForGeneration] = useState([]);
   console.log(gdp);
+  console.log(populationForGeneration);
 
   const {
     name: { common },
@@ -53,7 +62,39 @@ export const Modal = ({ toggleModal, selectedCountry }) => {
         }
       };
 
+      const fetchPopulationForGeneration = async () => {
+        const fetchIndicator = async (code) => {
+          try {
+            setError(null);
+            const res = await fetch(
+              `https://api.worldbank.org/v2/country/JP/indicator/${code}?format=json&date=${LASTYEAR}&per_page=1`
+            );
+            if (!res.ok) {
+              throw new Error(`HTPP error! Status:${res.status}`);
+            }
+            const json = await res.json();
+            return json[1]?.[0]?.value || 0;
+          } catch (err) {
+            setError(err.message);
+            setPopulationForGeneration([]);
+          }
+        };
+
+        const [children, working, elderly] = await Promise.all([
+          fetchIndicator(indicators.children),
+          fetchIndicator(indicators.working),
+          fetchIndicator(indicators.elderly),
+        ]);
+
+        setPopulationForGeneration([
+          { name: "Children (0–14)", value: children },
+          { name: "Working Age (15–64)", value: working },
+          { name: "Elderly (65+)", value: elderly },
+        ]);
+      };
+
       fetchWorldBank();
+      fetchPopulationForGeneration();
     },
     [setError, setGdp, cca2]
   );
@@ -99,6 +140,29 @@ export const Modal = ({ toggleModal, selectedCountry }) => {
                 </LineChart>
               </ResponsiveContainer>
             )}
+          </div>
+          <div>
+            <h3>Population</h3>
+            <ResponsiveContainer width="100%" height={400}>
+              <PieChart>
+                <Pie
+                  data={populationForGeneration}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius={130}
+                  label
+                >
+                  {populationForGeneration.map((_, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={colors[index % colors.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(val) => `${val.toFixed(1)}%`} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
 
           <button onClick={toggleModal}>Close</button>
