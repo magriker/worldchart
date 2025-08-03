@@ -9,8 +9,12 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
 } from "recharts";
-import { PieChart, Pie, Cell } from "recharts";
 
 const LASTYEAR = new Date().getFullYear() - 1;
 const TENYEARSAGO = LASTYEAR - 10;
@@ -25,8 +29,10 @@ export const Modal = ({ toggleModal, selectedCountry }) => {
   const [error, setError] = useState();
   const [gdp, setGdp] = useState();
   const [populationForGeneration, setPopulationForGeneration] = useState([]);
+  const [totalPopulation, setTotalPopulation] = useState(null);
   console.log(gdp);
   console.log(populationForGeneration);
+  console.log(totalPopulation);
 
   const {
     name: { common },
@@ -67,7 +73,7 @@ export const Modal = ({ toggleModal, selectedCountry }) => {
           try {
             setError(null);
             const res = await fetch(
-              `https://api.worldbank.org/v2/country/JP/indicator/${code}?format=json&date=${LASTYEAR}&per_page=1`
+              `https://api.worldbank.org/v2/country/${cca2}/indicator/${code}?format=json&date=${LASTYEAR}&per_page=1`
             );
             if (!res.ok) {
               throw new Error(`HTPP error! Status:${res.status}`);
@@ -93,8 +99,27 @@ export const Modal = ({ toggleModal, selectedCountry }) => {
         ]);
       };
 
+      const fetchTotalPopulation = async () => {
+        try {
+          setError(null);
+          const res = await fetch(
+            `https://api.worldbank.org/v2/country/${cca2}/indicator/SP.POP.TOTL?format=json&date=${LASTYEAR}`
+          );
+          if (!res.ok) {
+            throw new Error(`HTPP error! Status:${res.status}`);
+          }
+          const data = await res.json();
+          const totalPopulation = await data[1]?.[0]?.value;
+          setTotalPopulation(totalPopulation);
+        } catch (err) {
+          setError(err.message);
+          setTotalPopulation(null);
+        }
+      };
+
       fetchWorldBank();
       fetchPopulationForGeneration();
+      fetchTotalPopulation();
     },
     [setError, setGdp, cca2]
   );
@@ -143,6 +168,21 @@ export const Modal = ({ toggleModal, selectedCountry }) => {
           </div>
           <div>
             <h3>Population</h3>
+            <ResponsiveContainer width="100%" height={100}>
+              <BarChart
+                layout="vertical"
+                data={[{ name: "Total Population", value: totalPopulation }]}
+                margin={{ left: 80, right: 40 }}
+              >
+                <XAxis
+                  type="number"
+                  tickFormatter={(val) => `${(val / 1_000_000).toFixed(0)}M`}
+                />
+                <YAxis type="category" dataKey="name" />
+                <Tooltip formatter={(val) => `${val.toLocaleString()}`} />
+                <Bar dataKey="value" fill="#3da06e" barSize={25} />
+              </BarChart>
+            </ResponsiveContainer>
             <ResponsiveContainer width="100%" height={400}>
               <PieChart>
                 <Pie
@@ -150,7 +190,8 @@ export const Modal = ({ toggleModal, selectedCountry }) => {
                   dataKey="value"
                   nameKey="name"
                   outerRadius={130}
-                  label
+                  labelLine={true}
+                  label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
                 >
                   {populationForGeneration.map((_, index) => (
                     <Cell
